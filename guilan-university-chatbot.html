@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دستیار هوشمند دانشگاه گیلان | Guilan University AI Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 50%, #fff9c4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Decorative elements */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -40%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(139, 195, 74, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 
+                0 10px 40px rgba(56, 142, 60, 0.15),
+                0 0 0 1px rgba(76, 175, 80, 0.1);
+            width: 100%;
+            max-width: 850px;
+            height: 85vh;
+            max-height: 750px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* University Header */
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 50%, #43a047 100%);
+            color: white;
+            padding: 24px 28px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 3px solid #1b5e20;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 20px,
+                rgba(255, 255, 255, 0.03) 20px,
+                rgba(255, 255, 255, 0.03) 40px
+            );
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .university-logo {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        .header-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .header-text p {
+            font-size: 14px;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        /* Configuration Bar */
+        .config-bar {
+            background: linear-gradient(to bottom, #f5f5f5, #fafafa);
+            padding: 16px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .config-bar input {
+            flex: 1;
+            padding: 11px 16px;
+            background: white;
+            border: 2px solid #c8e6c9;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #2e7d32;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .config-bar input:focus {
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .config-bar input::placeholder {
+            color: #81c784;
+        }
+
+        .config-bar button {
+            padding: 11px 24px;
+            background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .config-bar button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        .config-bar button:active {
+            transform: translateY(0);
+        }
+
+        /* Status Bar */
+        .status {
+            padding: 12px 24px;
+            background: linear-gradient(to right, #fff9c4, #fff59d);
+            border-bottom: 1px solid #fff176;
+            text-align: center;
+            font-size: 13px;
+            color: #f57f17;
+            font-weight: 500;
+        }
+
+        .status.connected {
+            background: linear-gradient(to right, #c8e6c9, #a5d6a7);
+            color: #1b5e20;
+            border-color: #81c784;
+        }
+
+        .status.error {
+            background: linear-gradient(to right, #ffccbc, #ffab91);
+            color: #bf360c;
+            border-color: #ff8a65;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            background: linear-gradient(to bottom, #fafafa, #f5f5f5);
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #f5f5f5;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #81c784, #66bb6a);
+            border-radius: 4px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #66bb6a, #4caf50);
+        }
+
+        /* Welcome Message */
+        .welcome-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-right: 4px solid #4caf50;
+        }
+
+        .welcome-card h2 {
+            color: #2e7d32;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .welcome-card p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 8px;
+        }
+
+        /* Messages */
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: messageSlide 0.4s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, #66bb6a 0%, #81c784 100%);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 14px 18px;
+            border-radius: 14px;
+            line-height: 1.7;
+            font-size: 14px;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 3px 10px rgba(46, 125, 50, 0.25);
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8f5e9;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 6px;
+            font-weight: 400;
+        }
+
+        /* Typing Indicator */
+        .typing {
+            display: flex;
+            gap: 6px;
+            padding: 10px;
+        }
+
+        .typing span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-12px);
+                opacity: 1;
+            }
+        }
+
+        /* Input Container */
+        .input-container {
+            padding: 20px 24px;
+            background: white;
+            border-top: 2px solid #e8f5e9;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 14px 20px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            color: #333;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .input-container input:focus {
+            background: white;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .input-container input::placeholder {
+            color: #9e9e9e;
+        }
+
+        .input-container button {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-container button:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+        }
+
+        .input-container button:active:not(:disabled) {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .input-container button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                height: 100vh;
+                max-height: none;
+                border-radius: 0;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .university-logo {
+                width: 50px;
+                height: 50px;
+                font-size: 26px;
+            }
+
+            .header-text h1 {
+                font-size: 20px;
+            }
+
+            .header-text p {
+                font-size: 12px;
+            }
+
+            .config-bar,
+            .input-container {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .message-content {
+                max-width: 80%;
+            }
+
+            .welcome-card {
+                padding: 20px;
+            }
+        }
+
+        /* Loading animation for send button */
+        .sending {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Better text selection */
+        ::selection {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- University Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="university-logo">🎓</div>
+                <div class="header-text">
+                    <h1>دستیار هوشمند دانشگاه گیلان</h1>
+                    <p>Guilan University AI Assistant | سیستم پاسخگویی خودکار</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Bar -->
+        <div class="config-bar">
+            <input 
+                type="text" 
+                id="apiUrl" 
+                placeholder="🔗 آدرس Webhook (مثال: https://your-n8n.com/webhook/persian-chat)"
+                value=""
+            >
+            <button onclick="saveConfig()">💾 ذخیره</button>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status" id="status">
+            ⚠️ لطفاً آدرس Webhook خود را وارد کرده و ذخیره کنید
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer">
+            <!-- Welcome Card -->
+            <div class="welcome-card">
+                <h2>✨ خوش آمدید</h2>
+                <p>
+                    <strong>سلام و درود!</strong><br>
+                    من دستیار هوشمند دانشگاه گیلان هستم. از من می‌توانید درباره رشته‌ها، دوره‌های آموزشی، 
+                    اساتید، مقررات دانشگاه و سایر موضوعات مرتبط سوال بپرسید.
+                </p>
+                <p style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e8f5e9;">
+                    <strong>Welcome!</strong><br>
+                    I'm the AI assistant for Guilan University. Feel free to ask me about programs, 
+                    courses, faculty, university regulations, and other related topics.
+                </p>
+            </div>
+        </div>
+
+        <!-- Input Container -->
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="questionInput" 
+                placeholder="💬 سوال خود را بنویسید..."
+                onkeypress="handleKeyPress(event)"
+            >
+            <button onclick="sendQuestion()" id="sendButton" title="ارسال">
+                ▶️
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let apiUrl = '';
+        let sessionId = 'guilan-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+
+        // Load saved URL from localStorage
+        window.onload = function() {
+            const savedUrl = localStorage.getItem('guilanChatbotApiUrl');
+            if (savedUrl) {
+                document.getElementById('apiUrl').value = savedUrl;
+                apiUrl = savedUrl;
+                updateStatus('connected', '✅ متصل و آماده برای پاسخگویی');
+            }
+        };
+
+        function saveConfig() {
+            const urlInput = document.getElementById('apiUrl').value.trim();
+            
+            if (!urlInput) {
+                updateStatus('error', '⚠️ لطفاً آدرس Webhook را وارد کنید');
+                return;
+            }
+
+            if (!urlInput.startsWith('http')) {
+                updateStatus('error', '⚠️ آدرس باید با http:// یا https:// شروع شود');
+                return;
+            }
+
+            apiUrl = urlInput;
+            localStorage.setItem('guilanChatbotApiUrl', apiUrl);
+            updateStatus('connected', '✅ تنظیمات با موفقیت ذخیره شد - آماده برای پاسخگویی');
+        }
+
+        function updateStatus(type, message) {
+            const statusEl = document.getElementById('status');
+            statusEl.className = 'status ' + type;
+            statusEl.textContent = message;
+        }
+
+        function addMessage(text, isUser, time = null) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = isUser ? '👤' : '🎓';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            
+            // Support for line breaks and basic formatting
+            const formattedText = text.replace(/\n/g, '<br>');
+            content.innerHTML = formattedText;
+            
+            if (time) {
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = time;
+                content.appendChild(timeDiv);
+            }
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+            chatContainer.appendChild(messageDiv);
+            
+            // Smooth scroll to bottom
+            chatContainer.scrollTo({
+                top: chatContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        function showTyping() {
+            const chatContainer = document.getElementById('chatContainer');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing-indicator';
+            
+            typingDiv.innerHTML = `
+                <div class="message-avatar">🎓</div>
+                <div class="message-content">
+                    <div class="typing">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTo({
+                top: chatContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        function hideTyping() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        async function sendQuestion() {
+            if (!apiUrl) {
+                updateStatus('error', '⚠️ لطفاً ابتدا آدرس Webhook را تنظیم کنید');
+                return;
+            }
+
+            const questionInput = document.getElementById('questionInput');
+            const question = questionInput.value.trim();
+            
+            if (!question) return;
+            
+            // Add user message
+            const currentTime = new Date().toLocaleTimeString('fa-IR', { 
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+            addMessage(question, true, currentTime);
+            questionInput.value = '';
+            
+            // Disable send button and add loading state
+            const sendButton = document.getElementById('sendButton');
+            sendButton.disabled = true;
+            sendButton.classList.add('sending');
+            
+            // Show typing indicator
+            showTyping();
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        question: question,
+                        sessionId: sessionId
+                    })
+                });
+                
+                hideTyping();
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const botTime = new Date().toLocaleTimeString('fa-IR', { 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                    });
+                    addMessage(data.answer || 'پاسخی دریافت نشد', false, botTime);
+                    updateStatus('connected', '✅ متصل');
+                } else {
+                    const errorText = `خطای ${response.status}: ${response.statusText}`;
+                    addMessage(
+                        `❌ ${errorText}\n\nلطفاً آدرس Webhook و تنظیمات n8n را بررسی کنید.`,
+                        false
+                    );
+                    updateStatus('error', '❌ خطا در اتصال');
+                }
+            } catch (error) {
+                hideTyping();
+                let errorMessage = '❌ امکان اتصال به سرور وجود ندارد.\n\n';
+                errorMessage += 'لطفاً موارد زیر را بررسی کنید:\n';
+                errorMessage += '• آدرس Webhook صحیح است\n';
+                errorMessage += '• Workflow در n8n فعال است\n';
+                errorMessage += '• CORS در n8n فعال است\n';
+                errorMessage += '• اتصال اینترنت شما برقرار است\n\n';
+                errorMessage += 'خطای فنی: ' + error.message;
+                
+                addMessage(errorMessage, false);
+                updateStatus('error', '❌ خطا در اتصال به سرور');
+                console.error('Connection Error:', error);
+            } finally {
+                sendButton.disabled = false;
+                sendButton.classList.remove('sending');
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendQuestion();
+            }
+        }
+
+        // Auto-focus on input
+        document.getElementById('questionInput').focus();
+    </script>
+</body>
+</html>
