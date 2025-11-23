@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دستیار هوشمند دانشگاه گیلان | Guilan University AI Assistant</title>
+    <title>دستیار هوشمند دانشگاه گیلان | University Of Guilan AI Assistant</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -628,19 +628,19 @@
             
             <div class="level-buttons">
                 <div class="level-btn" onclick="selectLevel('bachelor')">
-                    <div class="icon">📚</div>
+                    <div class="icon">📘</div>
                     <div class="title">کارشناسی</div>
                     <div class="subtitle">Bachelor's Degree</div>
                 </div>
                 
                 <div class="level-btn" onclick="selectLevel('master')">
-                    <div class="icon">🎯</div>
+                    <div class="icon">📚</div>
                     <div class="title">کارشناسی ارشد</div>
                     <div class="subtitle">Master's Degree</div>
                 </div>
                 
                 <div class="level-btn" onclick="selectLevel('phd')">
-                    <div class="icon">🎖️</div>
+                    <div class="icon">🎓</div>
                     <div class="title">دکتری</div>
                     <div class="subtitle">PhD</div>
                 </div>
@@ -911,7 +911,7 @@
                 } else {
                     const errorText = `خطای ${response.status}: ${response.statusText}`;
                     addMessage(
-                        `❌ ${errorText}\n\nلطفاً آدرس Webhook و تنظیمات n8n را بررسی کنید.`,
+                        `❌ ${errorText}\n\nخطا در اتصال به سرور `,
                         false
                     );
                     updateStatus('error', '❌ خطا در اتصال');
@@ -919,12 +919,6 @@
             } catch (error) {
                 hideTyping();
                 let errorMessage = '❌ امکان اتصال به سرور وجود ندارد.\n\n';
-                errorMessage += 'لطفاً موارد زیر را بررسی کنید:\n';
-                errorMessage += '• آدرس Webhook صحیح است\n';
-                errorMessage += '• Workflow در n8n فعال است\n';
-                errorMessage += '• CORS در n8n فعال است\n';
-                errorMessage += '• اتصال اینترنت شما برقرار است\n\n';
-                errorMessage += 'خطای فنی: ' + error.message;
                 
                 addMessage(errorMessage, false);
                 updateStatus('error', '❌ خطا در اتصال به سرور');
