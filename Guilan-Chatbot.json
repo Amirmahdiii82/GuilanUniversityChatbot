@@ -1,0 +1,322 @@
+{
+  "name": "Guilan-Chatbot-phd",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "phd",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "eec576dd-b3cf-47a0-ad70-25c8dc939869",
+      "name": "Webhook",
+      "webhookId": "persian-chatbot-webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "user-query",
+              "name": "chatInput",
+              "value": "={{ $json.body.question }}",
+              "type": "string"
+            },
+            {
+              "id": "session-id",
+              "name": "sessionId",
+              "value": "={{ $json.body.sessionId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        240,
+        0
+      ],
+      "id": "e4f929dd-b3d2-463c-96f3-0d1ac50c003a",
+      "name": "Extract Input"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Persian Chatbot\nrole: system\nlanguage: fa\nbehavior:\nYou MUST use the vector store tool for EVERY question. Never answer from your own knowledge.\nAlways call the database tool first before responding.\nOnly answer using data returned from the tool.\nRespond in Persian, politely and concisely.\nIf question is unrelated/harmful: refuse politely.\n➕ Additional PhD-only rules:\nThis agent must only answer questions related to the PhD level.\nIf the user asks about any other academic level (e.g., Bachelor's, Master's, etc.), politely refuse and say:\n\"لطفاً برای این مقطع از پنل مخصوص همان مقطع استفاده کنید.\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        480,
+        0
+      ],
+      "id": "2e842435-5df7-4e53-9332-907c01cc5f07",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-turbo",
+          "mode": "list",
+          "cachedResultName": "gpt-5-turbo"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        224
+      ],
+      "id": "fce47c6b-4075-4885-b6c1-5a4d4df7d67a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Y3bYH5UkiV0cWWbU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to search the university database for information about courses, schedules, faculty, and academic data. Always use this tool for any university-related questions. This is your ONLY source of information."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        224
+      ],
+      "id": "44ee74f0-6566-4f5b-8c4c-2f49f8692b2b",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "phd-index",
+          "mode": "list",
+          "cachedResultName": "phd-index"
+        },
+        "options": {
+          "pineconeNamespace": "first_batch"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        432
+      ],
+      "id": "8b450e46-64ba-4d71-83e2-c640c7b35c22",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "LeXaKySMkbI9FaHF",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        864,
+        432
+      ],
+      "id": "d9a1e63e-aff5-4f14-8445-bf54b1464e32",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "Y3bYH5UkiV0cWWbU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-large",
+        "options": {
+          "dimensions": 1536
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        656,
+        640
+      ],
+      "id": "81285c41-894f-4a63-8899-81d9c1424a85",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "Y3bYH5UkiV0cWWbU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Extract Input').item.json.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        544,
+        224
+      ],
+      "id": "064da923-26bd-42fa-9168-7eb3f7f78de5",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"answer\": $json.output } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        0
+      ],
+      "id": "95e5388c-fe25-42ed-ab33-98a1ab53417b",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Input": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "178c4800-be4d-41fc-a8de-9fc0c73b51fd",
+  "meta": {
+    "instanceId": "c2985d92c7cdcd523e6fd24df52289d4cb0fdd4fa8f7f7cc912bf14097f69450"
+  },
+  "id": "F9cV7CNaaueJwVWQ",
+  "tags": []
+}
